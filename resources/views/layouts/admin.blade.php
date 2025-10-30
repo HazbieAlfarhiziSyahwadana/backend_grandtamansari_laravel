@@ -12,7 +12,11 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    <style>[x-cloak]{display:none!important;}</style>
+    <style>
+        [x-cloak]{display:none!important;}
+        .hide-scrollbar::-webkit-scrollbar{display:none;}
+        .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
+    </style>
 </head>
 <body class="font-sans antialiased bg-slate-100">
     @php
@@ -34,8 +38,8 @@
         ];
     @endphp
     <div x-data="{ sidebarOpen: false }" class="min-h-screen">
-        <div class="flex min-h-screen">
-            <aside class="hidden w-72 flex-col bg-slate-950/95 px-5 py-6 text-slate-200 shadow-2xl ring-1 ring-slate-900/20 lg:flex">
+        <div class="flex min-h-screen lg:h-screen lg:overflow-hidden">
+            <aside class="hidden w-72 flex-col bg-slate-950/95 px-5 py-6 text-slate-200 shadow-2xl ring-1 ring-slate-900/20 lg:flex lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto hide-scrollbar">
                 <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
                     @if ($companyLogoUrl)
                         <img src="{{ $companyLogoUrl }}" alt="{{ $companyName }}" class="h-10 w-auto rounded-lg border border-white/10 bg-white/90 p-1">
@@ -79,8 +83,8 @@
                 </div>
             </aside>
 
-            <div class="flex flex-1 flex-col">
-                <header class="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <div class="flex flex-1 flex-col min-h-0">
+                <header class="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 py-3 shadow-sm">
                     <div class="flex items-center gap-3">
                         <button type="button" class="inline-flex items-center justify-center rounded-md border border-slate-200 p-2 text-slate-600 lg:hidden" @click="sidebarOpen = !sidebarOpen">
                             <span class="sr-only">Toggle sidebar</span>
