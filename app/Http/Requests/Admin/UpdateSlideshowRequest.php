@@ -19,6 +19,7 @@ class UpdateSlideshowRequest extends FormRequest
             'sort' => ['nullable', 'integer', 'min:0'],
             'gambar_desktop' => ['nullable', 'image', 'max:4096'],
             'gambar_mobile' => ['nullable', 'image', 'max:4096'],
+            'active' => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -13,7 +13,10 @@ class SlideshowController extends Controller
 {
     public function index()
     {
-        $slideshows = Slideshow::orderBy('sort', 'asc')->get();
+        // Hanya tampilkan slideshow yang aktif untuk API public
+        $slideshows = Slideshow::where('active', 1)
+            ->orderBy('sort', 'asc')
+            ->get();
         
         return response()->json([
             'success' => true,
@@ -29,6 +32,7 @@ class SlideshowController extends Controller
             'gambar_mobile' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'link' => 'nullable|string|max:225',
             'sort' => 'nullable|integer|min:0',
+            'active' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -40,6 +44,7 @@ class SlideshowController extends Controller
         }
 
         $data = $request->all();
+        $data['active'] = $request->input('active', 0); // Default 0 jika tidak ada
 
         if ($request->hasFile('gambar_desktop')) {
             $data['gambar_desktop'] = $request->file('gambar_desktop')->store('slideshow/desktop', 'public');
@@ -91,6 +96,7 @@ class SlideshowController extends Controller
             'gambar_mobile' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
             'link' => 'nullable|string|max:225',
             'sort' => 'nullable|integer|min:0',
+            'active' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -102,6 +108,11 @@ class SlideshowController extends Controller
         }
 
         $data = $request->all();
+        
+        // Handle active field
+        if ($request->has('active')) {
+            $data['active'] = $request->input('active');
+        }
 
         if ($request->hasFile('gambar_desktop')) {
             if ($slideshow->gambar_desktop) Storage::disk('public')->delete($slideshow->gambar_desktop);

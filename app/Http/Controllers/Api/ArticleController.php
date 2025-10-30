@@ -13,7 +13,7 @@ class ArticleController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Article::with('type');
+        $query = Article::with('type')->active(); // Only active articles
 
         // Filter by article type
         if ($request->has('articletype_id')) {
@@ -32,11 +32,7 @@ class ArticleController extends Controller
 
         $articles = $query->latest()->paginate($request->per_page ?? 10);
 
-        // Add image_url to each article
-        $articles->getCollection()->transform(function ($article) {
-            $article->image_url = $article->image_url;
-            return $article;
-        });
+        // image_url sudah otomatis ada dari $appends di model
 
         return response()->json([
             'success' => true,
@@ -54,6 +50,7 @@ class ArticleController extends Controller
             'caption' => 'nullable|string|max:225',
             'content' => 'required|string',
             'keyword' => 'nullable|string',
+            'active' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -65,6 +62,7 @@ class ArticleController extends Controller
         }
 
         $data = $request->all();
+        $data['active'] = $request->input('active', 0);
 
         // Generate slug if not provided
         if (empty($data['slug'])) {
@@ -73,15 +71,11 @@ class ArticleController extends Controller
 
         // Handle image upload
         if ($request->hasFile('gambar')) {
-            $image = $request->file('gambar');
-            $imageName = time() . '_' . Str::slug($data['title']) . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('articles', $imageName, 'public');
-            $data['gambar'] = $imagePath;
+            $data['gambar'] = $request->file('gambar')->store('articles', 'public');
         }
 
         $article = Article::create($data);
         $article->load('type');
-        $article->image_url = $article->image_url;
 
         return response()->json([
             'success' => true,
@@ -101,8 +95,6 @@ class ArticleController extends Controller
             ], 404);
         }
 
-        $article->image_url = $article->image_url;
-
         return response()->json([
             'success' => true,
             'data' => $article
@@ -119,8 +111,6 @@ class ArticleController extends Controller
                 'message' => 'Article not found'
             ], 404);
         }
-
-        $article->image_url = $article->image_url;
 
         return response()->json([
             'success' => true,
@@ -147,6 +137,7 @@ class ArticleController extends Controller
             'caption' => 'nullable|string|max:225',
             'content' => 'required|string',
             'keyword' => 'nullable|string',
+            'active' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -158,6 +149,10 @@ class ArticleController extends Controller
         }
 
         $data = $request->all();
+        
+        if ($request->has('active')) {
+            $data['active'] = $request->input('active');
+        }
 
         // Handle image upload
         if ($request->hasFile('gambar')) {
@@ -166,15 +161,11 @@ class ArticleController extends Controller
                 Storage::disk('public')->delete($article->gambar);
             }
 
-            $image = $request->file('gambar');
-            $imageName = time() . '_' . Str::slug($data['title']) . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('articles', $imageName, 'public');
-            $data['gambar'] = $imagePath;
+            $data['gambar'] = $request->file('gambar')->store('articles', 'public');
         }
 
         $article->update($data);
         $article->load('type');
-        $article->image_url = $article->image_url;
 
         return response()->json([
             'success' => true,

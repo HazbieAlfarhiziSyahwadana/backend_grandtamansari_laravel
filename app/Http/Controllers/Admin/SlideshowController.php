@@ -30,6 +30,7 @@ class SlideshowController extends Controller
 
         $data = $request->validated();
         $data['sort'] = $data['sort'] ?? 0;
+        $data['active'] = $request->has('active') ? 1 : 0; // Handle checkbox
         $data['gambar_desktop'] = $this->storeImage($request->file('gambar_desktop'));
         $data['gambar_mobile'] = $this->storeImage($request->file('gambar_mobile'));
 
@@ -54,6 +55,7 @@ class SlideshowController extends Controller
 
         $data = $request->validated();
         $data['sort'] = $data['sort'] ?? 0;
+        $data['active'] = $request->has('active') ? 1 : 0; // Handle checkbox
 
         if ($request->hasFile('gambar_desktop')) {
             $data['gambar_desktop'] = $this->storeImage($request->file('gambar_desktop'), $slideshow->gambar_desktop);

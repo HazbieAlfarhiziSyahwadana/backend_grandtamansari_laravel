@@ -19,10 +19,12 @@ class Slideshow extends Model
         'gambar_mobile',
         'link',
         'sort',
+        'active',
     ];
 
     protected $casts = [
         'sort' => 'integer',
+        'active' => 'boolean', // Cast ke boolean
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -32,6 +34,18 @@ class Slideshow extends Model
         'desktop_image_url',
         'mobile_image_url',
     ];
+
+    // Scope untuk hanya mengambil slideshow aktif
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
+    }
+
+    // Scope untuk sorting
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort', 'asc');
+    }
 
     public function getDesktopImageUrlAttribute(): ?string
     {
@@ -62,6 +76,3 @@ class Slideshow extends Model
         return asset('storage/' . $normalizedPath);
     }
 }
-
-
-

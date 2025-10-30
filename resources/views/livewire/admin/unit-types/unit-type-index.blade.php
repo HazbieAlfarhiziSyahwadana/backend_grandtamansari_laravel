@@ -36,7 +36,15 @@
                             <span class="inline-flex items-center gap-1">Slug <x-admin.sort-icon field="slug" :current="$sortField" :direction="$sortDirection" /></span>
                         </th>
                         <th scope="col" class="px-4 py-3 text-left">Luas</th>
+                        <th scope="col" class="px-4 py-3 text-left">Gallery</th>
+                        <th scope="col" class="px-4 py-3 text-left">Spesifikasi</th>
                         <th scope="col" class="px-4 py-3 text-left">Harga</th>
+                        <th scope="col" class="cursor-pointer px-4 py-3 text-center" wire:click="sortBy('sort')">
+                            <span class="inline-flex items-center gap-1">Urutan <x-admin.sort-icon field="sort" :current="$sortField" :direction="$sortDirection" /></span>
+                        </th>
+                        <th scope="col" class="cursor-pointer px-4 py-3 text-center" wire:click="sortBy('active')">
+                            <span class="inline-flex items-center gap-1">Status <x-admin.sort-icon field="active" :current="$sortField" :direction="$sortDirection" /></span>
+                        </th>
                         <th scope="col" class="cursor-pointer px-4 py-3 text-left" wire:click="sortBy('updated_at')">
                             <span class="inline-flex items-center gap-1">Diperbarui <x-admin.sort-icon field="updated_at" :current="$sortField" :direction="$sortDirection" /></span>
                         </th>
@@ -63,8 +71,63 @@
                                 <div>LB: {{ $unit->floor_area }} m&sup2;</div>
                             </td>
                             <td class="px-4 py-3">
+                                @if($unit->img_gallery)
+                                    <div class="flex items-center gap-2">
+                                        <img src="{{ $unit->gallery_image_url }}" alt="Gallery" class="h-10 w-10 rounded object-cover">
+                                        <div class="text-xs">
+                                            <div class="font-medium text-purple-700">{{ $unit->caption ?? '-' }}</div>
+                                            @if($unit->gallery_active)
+                                                <span class="text-green-600">✓ Aktif</span>
+                                            @else
+                                                <span class="text-gray-500">○ Nonaktif</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-xs text-slate-400">Tidak ada gallery</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-sm max-w-xs">
+                                @if($unit->specification)
+                                    <div class="group relative">
+                                        <div class="truncate text-slate-600">
+                                            {{ Str::limit(strip_tags($unit->specification), 40) }}
+                                        </div>
+                                        <div class="pointer-events-none absolute left-0 top-full z-10 mt-1 hidden w-64 rounded-lg border border-slate-200 bg-white p-3 shadow-lg group-hover:block">
+                                            <div class="text-xs text-slate-700">
+                                                {!! Str::limit($unit->specification, 200) !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-xs text-slate-400">Tidak ada spesifikasi</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
                                 <div>Harga: {{ $unit->price ?? '-' }}</div>
                                 <div>Promo: {{ $unit->promo_price ?? '-' }}</div>
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                    {{ $unit->sort }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                @if($unit->active)
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Aktif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Nonaktif
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-4 py-3">{{ optional($unit->updated_at)->diffForHumans() }}</td>
                             <td class="px-4 py-3">
@@ -76,7 +139,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-6 text-center text-sm text-slate-500">Belum ada unit type.</td>
+                            <td colspan="11" class="px-4 py-6 text-center text-sm text-slate-500">Belum ada unit type.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -88,4 +151,3 @@
         </div>
     </div>
 </div>
-

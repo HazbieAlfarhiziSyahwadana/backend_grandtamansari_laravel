@@ -34,7 +34,10 @@ class ArticleController extends Controller
         Gate::authorize('manage-content');
 
         $data = $request->validated();
-
+        
+        // Handle checkbox active
+        $data['active'] = $request->has('active') ? 1 : 0;
+        
         $data['slug'] = $this->resolveSlug($data['slug'] ?? null, $data['title']);
         $data['gambar'] = $this->storeImage($request->file('gambar'));
 
@@ -61,6 +64,10 @@ class ArticleController extends Controller
         Gate::authorize('manage-content');
 
         $data = $request->validated();
+        
+        // Handle checkbox active
+        $data['active'] = $request->has('active') ? 1 : 0;
+        
         $data['slug'] = $this->resolveSlug($data['slug'] ?? null, $data['title'], $article->id);
 
         if ($request->hasFile('gambar')) {
@@ -75,7 +82,8 @@ class ArticleController extends Controller
     public function destroy(Article $article): RedirectResponse
     {
         Gate::authorize('manage-content');
-
+        
+        $this->deleteImage($article->gambar);
         $article->delete();
 
         return redirect()->route('admin.articles.index')->with('status', 'Artikel berhasil dihapus.');
@@ -103,19 +111,23 @@ class ArticleController extends Controller
         return $candidate;
     }
 
-    private function storeImage(?\Illuminate\Http\UploadedFile $file, ?string $currentPath = null): ?string
+    private function storeImage(?UploadedFile $file, ?string $currentPath = null): ?string
     {
-        if (! $file) {
+        if (!$file) {
             return $currentPath;
         }
 
         $path = $file->store('articles', 'public');
 
-        if ($currentPath && Storage::disk('public')->exists($currentPath)) {
-            Storage::disk('public')->delete($currentPath);
-        }
+        $this->deleteImage($currentPath);
 
         return $path;
     }
-}
 
+    private function deleteImage(?string $path): void
+    {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+}

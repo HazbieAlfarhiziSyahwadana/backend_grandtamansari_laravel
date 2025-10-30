@@ -38,6 +38,9 @@
                         <th scope="col" class="px-4 py-3 cursor-pointer" wire:click="sortBy('slug')">
                             <span class="inline-flex items-center gap-1">Slug <x-admin.sort-icon field="slug" :current="$sortField" :direction="$sortDirection" /></span>
                         </th>
+                        <th scope="col" class="cursor-pointer px-4 py-3 text-center" wire:click="sortBy('active')">
+                            <span class="inline-flex items-center gap-1">Status <x-admin.sort-icon field="active" :current="$sortField" :direction="$sortDirection" /></span>
+                        </th>
                         <th scope="col" class="px-4 py-3 cursor-pointer" wire:click="sortBy('updated_at')">
                             <span class="inline-flex items-center gap-1">Diperbarui <x-admin.sort-icon field="updated_at" :current="$sortField" :direction="$sortDirection" /></span>
                         </th>
@@ -60,6 +63,23 @@
                             </td>
                             <td class="px-4 py-3">{{ $article->type?->type ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $article->slug }}</td>
+                            <td class="px-4 py-3 text-center">
+                                @if($article->active)
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Aktif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Nonaktif
+                                    </span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3">{{ optional($article->updated_at)->diffForHumans() }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end gap-2">
@@ -70,7 +90,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-6 text-center text-sm text-slate-500">Belum ada data artikel.</td>
+                            <td colspan="7" class="px-4 py-6 text-center text-sm text-slate-500">Belum ada data artikel.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -82,4 +102,3 @@
         </div>
     </div>
 </div>
-

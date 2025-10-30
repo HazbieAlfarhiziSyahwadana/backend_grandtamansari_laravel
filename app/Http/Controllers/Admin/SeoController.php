@@ -10,6 +10,7 @@ use App\Models\Seo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class SeoController extends Controller
 {
@@ -60,5 +61,33 @@ class SeoController extends Controller
         $seo->delete();
 
         return redirect()->route('admin.seo.index')->with('status', 'Data SEO berhasil dihapus.');
+    }
+
+    // Menambahkan fungsi index untuk pencarian
+    public function index(Request $request): View
+    {
+        Gate::authorize('manage-content');
+
+        // Menyiapkan query untuk SEO dengan pencarian
+        $query = Seo::query();
+
+        // Pencarian berdasarkan halaman, judul, dan keyword
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('page', 'like', "%{$search}%")
+                  ->orWhere('title', 'like', "%{$search}%")
+                  ->orWhere('keyword', 'like', "%{$search}%");
+            });
+        }
+
+        // Ambil data SEO yang sudah difilter dan diurutkan
+        $seoRecords = $query->latest()->paginate($request->per_page ?? 10);
+
+        // Mengirimkan data ke view
+        return view('admin.seo.index', [
+            'records' => $seoRecords,
+            'search' => $request->search,  // Membawa query search ke view
+        ]);
     }
 }

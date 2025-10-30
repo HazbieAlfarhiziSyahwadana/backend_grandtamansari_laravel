@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name', 225);
             $table->string('slug')->unique();
             $table->string('img_facade', 225);
+            $table->string('img_facade_mobile', 225);
             $table->string('img_layout', 225);
             $table->unsignedInteger('land_area');
             $table->unsignedInteger('floor_area');
@@ -32,8 +33,21 @@ return new class extends Migration
             $table->unsignedInteger('sisa_unit')->nullable();
             $table->text('specification')->nullable();
             $table->string('keyword')->nullable();
+            $table->boolean('active')->default(true);
+            
+            // Kolom baru untuk galeri show unit
+            $table->string('img_gallery', 225)->nullable(); // Path gambar gallery utama
+            $table->string('img_gallery_mobile', 225)->nullable(); // Path gambar gallery utama versi mobile
+            $table->string('caption', 225)->nullable(); // Caption untuk gallery
+            $table->string('alt_text', 225)->nullable(); // Alt text untuk SEO
+            $table->unsignedInteger('sort')->default(0); // Urutan tampilan
+            $table->boolean('gallery_active')->default(true); // Status aktif gallery
+            
             $table->timestamps();
             $table->softDeletes();
+            
+            // Index untuk sort
+            $table->index('sort');
         });
     }
 

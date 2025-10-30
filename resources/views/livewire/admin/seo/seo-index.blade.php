@@ -11,7 +11,7 @@
         <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div class="flex items-center gap-2">
                 <label for="seo-search" class="text-sm font-medium text-slate-600">Cari</label>
-                <input id="seo-search" type="search" wire:model.live.debounce.400ms="search" placeholder="Cari halaman atau judul" class="w-64 rounded-md border-slate-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                <input id="seo-search" type="search" wire:model.live.debounce.400ms="search" placeholder="Cari judul dan keyword" class="w-64 rounded-md border-slate-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" />
             </div>
             <div class="flex items-center gap-2">
                 <label for="seo-per-page" class="text-sm text-slate-600">Tampil</label>

@@ -19,6 +19,7 @@ class StoreSlideshowRequest extends FormRequest
             'sort' => ['nullable', 'integer', 'min:0'],
             'gambar_desktop' => ['required', 'image', 'max:4096'],
             'gambar_mobile' => ['required', 'image', 'max:4096'],
+            'active' => ['sometimes', 'boolean'],
         ];
     }
 }
